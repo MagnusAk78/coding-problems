@@ -11,8 +11,7 @@ object M_162_FindPeakElement {
     def getMax(compareTuple: (Int, Int)): (Int, Int) = compareTuple
   }
 
-  case object EmptyNode extends BinaryTree {
-  }
+  case object EmptyNode extends BinaryTree
 
   case class BinaryNode(index: Int, value: Int, left: BinaryTree = EmptyNode, right: BinaryTree = EmptyNode)
     extends BinaryTree {
