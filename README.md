@@ -8,10 +8,11 @@
 * [Test](#test)
 
 ## General info
-My solutions to some random coding problems. Note: this is not an attempt to provide the 'best' solutions. 
+My solutions to some random coding problems. 
 
 #### Features
-Some problems from [LeetCode](https://leetcode.com/)
+* Some random problems from [LeetCode](https://leetcode.com/)
+* [S-99](http://aperiodic.net/phil/scala/s-99/) Ninety-Nine Scala Problems (1-11)
 	
 ## Technologies
 Project is created with:
