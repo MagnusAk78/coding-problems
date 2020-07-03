@@ -1,6 +1,7 @@
 package maak.s99.problems
 
 import scala.annotation.tailrec
+import scala.collection.mutable.ListBuffer
 
 // Working with lists from http://aperiodic.net/phil/scala/s-99/
 object WorkingWithLists {
@@ -102,7 +103,7 @@ object WorkingWithLists {
   // P11: Modified run-length encoding.
   // Modify the result of problem P10 in such a way that if an element has no duplicates it is simply copied into the
   // result list. Only elements with duplicates are transferred as (N, E) terms.
-  // encodeModified(List('a, 'a, 'a, 'a, 'b, 'c, 'c, 'a, 'a, 'd, 'e, 'e, 'e, 'e))
+  // encodeModified(List('a, 'a, 'a, 'a, 'b, 'c, 'c, 'a, 'a, 'd, 'e, 'e, 'e, 'e)) =>
   // List((4,'a), 'b, (2,'c), (2,'a), 'd, (4,'e))
   def encodeModified[A](list: List[A]): List[Any] = {
     encode(list).foldRight(List[Any]())((encoded: (Int, A), resultList: List[Any]) => {
@@ -112,5 +113,93 @@ object WorkingWithLists {
         encoded :: resultList
       }
     })
+  }
+
+  // P12: Decode a run-length encoded list.
+  // Given a run-length code list generated as specified in problem P10, construct its uncompressed version.
+  // decode(List((4, 'a), (1, 'b), (2, 'c), (2, 'a), (1, 'd), (4, 'e))) =>
+  // List('a, 'a, 'a, 'a, 'b, 'c, 'c, 'a, 'a, 'd, 'e, 'e, 'e, 'e)
+  def decode[A](list: List[(Int, A)]): List[A] = {
+    list.flatMap(element => List.fill(element._1)(element._2))
+  }
+
+  // P13: Run-length encoding of a list (direct solution).
+  // Implement the so-called run-length encoding data compression method directly. I.e. don't use other methods you've
+  // written (like P09's pack); do all the work directly.
+  // List('a, 'a, 'a, 'a, 'b, 'c, 'c, 'a, 'a, 'd, 'e, 'e, 'e, 'e) => List((4,'a), (1,'b), (2,'c), (2,'a), (1,'d), (4,'e))
+  def encodeDirect[A](ls: List[A]): List[(Int, A)] = {
+
+    // The code becomes much shorter without internal function but then is cannot be tail recursive.
+    // I used Vector instead of list because the need to append, while using a List all the way results
+    // in prettier code.
+    @tailrec
+    def encodeDirectInt[A](ls: List[A], result: Vector[(Int, A)]): List[(Int, A)] = {
+      if (ls.isEmpty) {
+        result.toList
+      } else {
+        val (spanList, restList) = ls.span(_ == ls.head)
+        encodeDirectInt(restList, result :+ (spanList.length, spanList.head))
+      }
+    }
+    encodeDirectInt(ls, Vector())
+  }
+
+  // P14: Duplicate the elements of a list.
+  //duplicate(List('a, 'b, 'c, 'c, 'd)) => List('a, 'a, 'b, 'b, 'c, 'c, 'c, 'c, 'd, 'd)
+  def duplicate[A](ls: List[A]): List[A] = ls flatMap { e => List(e, e) }
+
+  // P15: Duplicate the elements of a list a given number of times.
+  // duplicateN(3, List('a, 'b, 'c, 'c, 'd)) => List('a, 'a, 'a, 'b, 'b, 'b, 'c, 'c, 'c, 'c, 'c, 'c, 'd, 'd, 'd)
+  def duplicateN[A](n: Int, ls: List[A]): List[A] = ls flatMap { e => List.fill(n)(e) }
+
+  // P16: Drop every Nth element from a list.
+  // drop(3, List('a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i, 'j, 'k)) => List[Symbol] = List('a, 'b, 'd, 'e, 'g, 'h, 'j, 'k)
+  def drop[A](n: Int, ls: List[A]): List[A] = {
+    @tailrec
+    def dropInt[A](n: Int, ls: List[A], result: ListBuffer[A]): List[A] = {
+      if(ls.length < n) {
+        result.appendAll(ls)
+        result.toList
+      } else {
+        val (ls1, ls2) = ls.splitAt(n-1)
+        dropInt(n, ls2.tail, result.appendAll(ls1))
+      }
+    }
+    dropInt(n, ls, ListBuffer.empty)
+  }
+  // 'Better' solution => ls.zipWithIndex filter { v => (v._2 + 1) % n != 0 } map { _._1 }
+
+  // P17: Split a list into two parts.
+  //The length of the first part is given. Use a Tuple for your result.
+  // split(3, List('a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i, 'j, 'k)) =>
+  // (List('a, 'b, 'c), List('d, 'e, 'f, 'g, 'h, 'i, 'j, 'k))
+  // Built in => ls.splitAt(n)
+  def split[A](n: Int, ls: List[A]): (List[A], List[A]) = {
+    @tailrec
+    def splitInt[A](n: Int, rest: List[A], firstList: List[A]): (List[A], List[A]) = {
+      (n, rest) match {
+        case (_, Nil) => (firstList.reverse, List())
+        case (0, x :: xs) => (firstList.reverse, rest)
+        case (_, x :: xs) => splitInt(n - 1, xs, x :: firstList)
+      }
+    }
+    splitInt(n, ls, List())
+  }
+
+  // P18: Extract a slice from a list.
+  // Given two indices, I and K, the slice is the list containing the elements from and including the Ith element up
+  // to but not including the Kth element of the original list. Start counting the elements with 0.
+  // slice(3, 7, List('a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i, 'j, 'k)) => List('d, 'e, 'f, 'g)
+  // Built in => ls.slice(i, k)
+  def slice[A](i: Int, k: Int, ls: List[A]): List[A] = {
+    @tailrec
+    def sliceInt[A](i: Int, k: Int, rest: List[A]): List[A] = {
+      (i, rest) match {
+        case (_, Nil) => List()
+        case (0, x :: xs) => rest.take(k)
+        case (_, x :: xs) => sliceInt(i - 1, k - 1, xs)
+      }
+    }
+    sliceInt(i, k, ls)
   }
 }

@@ -18,7 +18,7 @@ class H_4_MedianTwoSortedArraysTest extends org.scalatest.FlatSpec {
   //The meaning of total time N should be of O(log(n)) is that N grows linear while n grows exponentially
   "findMedianSortedArrays" should "have a run time complexity of O(log (m+n))" in {
     //Warm up
-    for(i <- 1 to 3) findMedianSortedArrays(Array.range(0, 500), Array.range(500, 1000))
+    for(i <- 1 to 30) findMedianSortedArrays(Array.range(0, 500), Array.range(500, 1000))
 
     val time1 = System.currentTimeMillis()
     findMedianSortedArrays(Array.range(0, 500000), Array.range(500000, 1000000)) // m + n == 1000000

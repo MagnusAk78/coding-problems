@@ -12,7 +12,7 @@ My solutions to some random coding problems.
 
 #### Features
 * Some random problems from [LeetCode](https://leetcode.com/)
-* [S-99](http://aperiodic.net/phil/scala/s-99/) Ninety-Nine Scala Problems (1-11)
+* [S-99](http://aperiodic.net/phil/scala/s-99/) Ninety-Nine Scala Problems (1-18)
 	
 ## Technologies
 Project is created with:
