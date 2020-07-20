@@ -1,7 +1,5 @@
 package maak.leetcode.problems.algorithms
 
-import scala.annotation.tailrec
-
 /*
 Given an input string (s) and a pattern (p), implement regular expression matching with support for '.' and '*'.
 
