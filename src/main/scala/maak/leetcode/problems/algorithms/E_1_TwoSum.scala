@@ -6,7 +6,8 @@ You may assume that each input would have exactly one solution, and you may not 
  */
 object E_1_TwoSum {
   def twoSum(nums: Array[Int], target: Int): Array[Int] = {
-    import scala.collection._
+    import scala.collection.mutable
+
     val hmap = mutable.HashMap[Int, Int]()
     for(i1 <- nums.indices) {
       hmap.get(target - nums(i1)) match {
